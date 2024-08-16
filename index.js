@@ -40,6 +40,7 @@ async function run() {
             const brand = req.query.brand;
             const category = req.query.category;
             const priceRange = req.query.priceRange;
+            const search = req.query.search || '';
             //create a filter object
             let filter = {}
             if (brand) {
@@ -51,6 +52,9 @@ async function run() {
             if (priceRange) {
                 const [minPrice, maxPrice] = priceRange.split('-').map(Number)
                 filter.price = { $gte: minPrice, $lte: maxPrice }
+            }
+            if (search) {
+                filter.name = { $regex: new RegExp(search, 'i') }
             }
             const result = await productCollection.find(filter).skip(page * size).limit(size).toArray()
             res.send(result);
@@ -61,6 +65,7 @@ async function run() {
             const brand = req.query.brand;
             const category = req.query.category;
             const priceRange = req.query.priceRange;
+            const search = req.query.search || '';
 
             //create a filter object
             let filter = {}
@@ -73,6 +78,9 @@ async function run() {
             if (priceRange) {
                 const [minPrice, maxPrice] = priceRange.split('-').map(Number)
                 filter.price = { $gte: minPrice, $lte: maxPrice }
+            }
+            if (search) {
+                filter.name = { $regex: new RegExp(search, 'i') };
             }
             const count = await productCollection.countDocuments(filter)
             res.send({ count });
