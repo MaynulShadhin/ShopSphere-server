@@ -37,7 +37,22 @@ async function run() {
         app.get('/all-products', async (req, res) => {
             const size = parseInt(req.query.size)
             const page = parseInt(req.query.page) - 1
-            const result = await productCollection.find().skip(page * size).limit(size).toArray()
+            const brand = req.query.brand;
+            const category = req.query.category;
+            const priceRange = req.query.priceRange;
+            //create a filter object
+            let filter = {}
+            if(brand){
+                filter.brand = brand;
+            }
+            if(category){
+                filter.category = category;
+            }
+            if(priceRange){
+                const[minPrice,maxPrice] = priceRange.split('-').map(Number)
+                filter.price = {$gte:minPrice, $lte: maxPrice}
+            }
+            const result = await productCollection.find(filter).skip(page * size).limit(size).toArray()
             res.send(result);
         })
 
