@@ -28,10 +28,23 @@ async function run() {
 
         const productCollection = client.db('ShopSphere').collection('products')
 
-        app.get('/products',async(req,res)=>{
-            const cursor = productCollection.find();
-            const result = await cursor.toArray();
+        app.get('/products', async (req, res) => {
+            const result = await productCollection.find().toArray()
             res.send(result);
+        })
+
+        //for pagination
+        app.get('/all-products', async (req, res) => {
+            const size = parseInt(req.query.size)
+            const page = parseInt(req.query.page) - 1
+            const result = await productCollection.find().skip(page * size).limit(size).toArray()
+            res.send(result);
+        })
+
+        //for data count
+        app.get('/products-count', async (req, res) => {
+            const count = await productCollection.countDocuments()
+            res.send({ count });
         })
 
         // Send a ping to confirm a successful connection
