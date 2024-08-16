@@ -42,15 +42,15 @@ async function run() {
             const priceRange = req.query.priceRange;
             //create a filter object
             let filter = {}
-            if(brand){
+            if (brand) {
                 filter.brand = brand;
             }
-            if(category){
+            if (category) {
                 filter.category = category;
             }
-            if(priceRange){
-                const[minPrice,maxPrice] = priceRange.split('-').map(Number)
-                filter.price = {$gte:minPrice, $lte: maxPrice}
+            if (priceRange) {
+                const [minPrice, maxPrice] = priceRange.split('-').map(Number)
+                filter.price = { $gte: minPrice, $lte: maxPrice }
             }
             const result = await productCollection.find(filter).skip(page * size).limit(size).toArray()
             res.send(result);
@@ -58,7 +58,23 @@ async function run() {
 
         //for data count
         app.get('/products-count', async (req, res) => {
-            const count = await productCollection.countDocuments()
+            const brand = req.query.brand;
+            const category = req.query.category;
+            const priceRange = req.query.priceRange;
+
+            //create a filter object
+            let filter = {}
+            if (brand) {
+                filter.brand = brand;
+            }
+            if (category) {
+                filter.category = category;
+            }
+            if (priceRange) {
+                const [minPrice, maxPrice] = priceRange.split('-').map(Number)
+                filter.price = { $gte: minPrice, $lte: maxPrice }
+            }
+            const count = await productCollection.countDocuments(filter)
             res.send({ count });
         })
 
