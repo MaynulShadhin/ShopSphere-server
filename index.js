@@ -71,7 +71,7 @@ async function run() {
                 sortOptions.dateAdded = -1;
             }
 
-            const result = await productCollection.find(filter).skip(page * size).limit(size).toArray()
+            const result = await productCollection.find(filter).sort(sortOptions).skip(page * size).limit(size).toArray()
             res.send(result);
         })
 
