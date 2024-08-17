@@ -41,6 +41,8 @@ async function run() {
             const category = req.query.category;
             const priceRange = req.query.priceRange;
             const search = req.query.search || '';
+            const sort = req.query.sort || '';
+
             //create a filter object
             let filter = {}
             if (brand) {
@@ -53,9 +55,22 @@ async function run() {
                 const [minPrice, maxPrice] = priceRange.split('-').map(Number)
                 filter.price = { $gte: minPrice, $lte: maxPrice }
             }
+            //add search
             if (search) {
                 filter.name = { $regex: new RegExp(search, 'i') }
             }
+            //add sorting
+            let sortOptions = {};
+            if (sort === 'price-asc') {
+                sortOptions.price = 1;
+            }
+            else if (sort === 'price-desc') {
+                sortOptions.price = -1
+            }
+            else if (sort === 'date-desc') {
+                sortOptions.dateAdded = -1;
+            }
+
             const result = await productCollection.find(filter).skip(page * size).limit(size).toArray()
             res.send(result);
         })
