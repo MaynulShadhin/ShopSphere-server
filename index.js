@@ -55,7 +55,7 @@ async function run() {
                 const [minPrice, maxPrice] = priceRange.split('-').map(Number)
                 filter.price = { $gte: minPrice, $lte: maxPrice }
             }
-            //add search
+            //add search input
             if (search) {
                 filter.name = { $regex: new RegExp(search, 'i') }
             }
